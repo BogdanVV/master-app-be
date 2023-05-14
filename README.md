@@ -1,4 +1,4 @@
-## Files needed for starting the project
+## Files needed for running the project
 
 - `config/config.yml`
 - `.env`
@@ -6,14 +6,12 @@
 ## Running the project
 
 ```bash
-   $ go mod tidy
+$ go mod tidy
 ```
-
-````
 
 ```bash
 $ go run main.go
-````
+```
 
 ## Migrations
 
