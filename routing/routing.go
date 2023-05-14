@@ -19,6 +19,11 @@ func InitRoutes(c controller.Controller) *gin.Engine {
 	api.Use(middleware.CheckAuth)
 	{
 		api.GET("/test", c.TestApi)
+
+		users := api.Group("users")
+		{
+			users.PUT("/:userId", c.UpdateUser)
+		}
 	}
 
 	return r

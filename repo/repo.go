@@ -11,17 +11,24 @@ import (
 
 type Repo struct {
 	AuthRepo
+	UsersRepo
 }
 
 func NewRepo(db *sqlx.DB) *Repo {
 	return &Repo{
-		AuthRepo: NewAuth(db),
+		AuthRepo:  NewAuth(db),
+		UsersRepo: NewUsers(db),
 	}
 }
 
 type AuthRepo interface {
 	CreateUser(name, email, password string) (string, error)
 	GetUserByEmail(password string) (models.User, error)
+}
+
+type UsersRepo interface {
+	GetUserById(id string) (models.UserResponse, error)
+	UpdateUser(id string, updateBody models.UserUpdateBody) (models.UserResponse, error)
 }
 
 func ConnectToDB() (*sqlx.DB, error) {

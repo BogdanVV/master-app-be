@@ -6,16 +6,22 @@ import (
 )
 
 type Service struct {
-	AuthRepo
+	AuthService
+	UsersService
 }
 
-func NewService(repository repo.Repo) *Service {
+func NewService(repository *repo.Repo) *Service {
 	return &Service{
-		AuthRepo: NewAuthService(repository),
+		AuthService:  NewAuth(repository),
+		UsersService: NewUsers(repository),
 	}
 }
 
-type AuthRepo interface {
+type AuthService interface {
 	Signup(name, email, password string) (string, error)
 	Login(email, password string) (models.LoginResponse, error)
+}
+
+type UsersService interface {
+	UpdateUser(userId string, updateBody models.UserUpdateBody) (models.UserResponse, error)
 }

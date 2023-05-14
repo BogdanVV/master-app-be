@@ -19,3 +19,16 @@ type LoginResponse struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 	AccessToken string    `json:"accessToken"`
 }
+
+type UserResponse struct {
+	Id        string    `json:"id" db:"id"`
+	Name      string    `json:"name" db:"name"`
+	Email     string    `json:"email" db:"email"`
+	CreatedAt time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
+}
+
+type UserUpdateBody struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}

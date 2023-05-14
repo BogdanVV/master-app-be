@@ -35,7 +35,7 @@ func main() {
 
 	// create controller, service and repo
 	repos := repo.NewRepo(db)
-	s := service.NewService(*repos)
+	s := service.NewService(repos)
 	controller := controller.NewController(s)
 
 	// init routing

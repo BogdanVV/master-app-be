@@ -1,3 +1,22 @@
+## Files needed for starting the project
+
+- `config/config.yml`
+- `.env`
+
+## Running the project
+
+```bash
+   $ go mod tidy
+```
+
+````
+
+```bash
+$ go run main.go
+````
+
+## Migrations
+
 ### Create migrations:
 
 ```bash
