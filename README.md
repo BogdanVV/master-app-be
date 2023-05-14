@@ -6,11 +6,11 @@
 ## Running the project
 
 ```bash
-$ go mod tidy
+go mod tidy
 ```
 
 ```bash
-$ go run main.go
+go run main.go
 ```
 
 ## Migrations
