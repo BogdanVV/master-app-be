@@ -8,8 +8,8 @@ import (
 )
 
 func (c *Controller) UpdateUser(ctx *gin.Context) {
-	var input models.UserUpdateBody
 	userId := ctx.Param("userId")
+	var input models.UserUpdateBody
 	ctx.BindJSON(&input)
 
 	user, err := c.service.UpdateUser(userId, input)

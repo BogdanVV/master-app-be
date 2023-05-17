@@ -45,6 +45,5 @@ func (c *Controller) Login(ctx *gin.Context) {
 	}
 
 	ctx.SetCookie("Authorization", user.AccessToken, 3600*24*30, "/", ctx.Request.URL.Hostname(), false, true)
-
 	ctx.JSON(http.StatusOK, gin.H{"data": user})
 }

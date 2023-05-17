@@ -8,6 +8,7 @@ import (
 
 func InitRoutes(c controller.Controller) *gin.Engine {
 	r := gin.Default()
+	r.Use(middleware.CORSMiddleware)
 
 	auth := r.Group("auth")
 	{

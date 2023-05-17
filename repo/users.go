@@ -44,7 +44,7 @@ func (r *Users) UpdateUser(id string, updateBody models.UserUpdateBody) (models.
 	row := r.db.QueryRowx(query, id)
 	err := row.StructScan(&userResponse)
 	if err != nil {
-		return models.UserResponse{}, err
+		return userResponse, err
 	}
 
 	return userResponse, nil
