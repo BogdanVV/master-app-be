@@ -25,6 +25,15 @@ func InitRoutes(c controller.Controller) *gin.Engine {
 		{
 			users.PUT("/:userId", c.UpdateUser)
 		}
+
+		todos := api.Group("todos")
+		{
+			todos.POST("/", c.CreateTodo)
+			todos.GET("/", c.GetAllTodos)
+			todos.GET("/:id", c.GetTodoById)
+			todos.DELETE("/:id", c.DeleteTodoById)
+			todos.PUT("/:id", c.UpdateTodoById)
+		}
 	}
 
 	return r

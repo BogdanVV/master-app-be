@@ -8,12 +8,14 @@ import (
 type Service struct {
 	AuthService
 	UsersService
+	TodosService
 }
 
 func NewService(repository *repo.Repo) *Service {
 	return &Service{
 		AuthService:  NewAuth(repository),
 		UsersService: NewUsers(repository),
+		TodosService: NewTodos(repository),
 	}
 }
 
@@ -24,4 +26,12 @@ type AuthService interface {
 
 type UsersService interface {
 	UpdateUser(userId string, updateBody models.UserUpdateBody) (models.UserResponse, error)
+}
+
+type TodosService interface {
+	CreateTodo(input models.TodoCreateBody) (models.TodoResponseBody, error)
+	GetAllTodos() ([]models.TodoResponseBody, error)
+	GetTodoById(id int) (models.TodoResponseBody, error)
+	DeleteTodoById(id int) error
+	UpdateTodoById(id int, input models.TodoUpdateBody) (models.TodoResponseBody, error)
 }

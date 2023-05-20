@@ -12,12 +12,14 @@ import (
 type Repo struct {
 	AuthRepo
 	UsersRepo
+	TodosRepo
 }
 
 func NewRepo(db *sqlx.DB) *Repo {
 	return &Repo{
 		AuthRepo:  NewAuth(db),
 		UsersRepo: NewUsers(db),
+		TodosRepo: NewTodos(db),
 	}
 }
 
@@ -29,6 +31,14 @@ type AuthRepo interface {
 type UsersRepo interface {
 	GetUserById(id string) (models.UserResponse, error)
 	UpdateUser(id string, updateBody models.UserUpdateBody) (models.UserResponse, error)
+}
+
+type TodosRepo interface {
+	CreateTodo(input models.TodoCreateBody) (models.TodoResponseBody, error)
+	GetAllTodos() ([]models.TodoResponseBody, error)
+	GetTodoById(id int) (models.TodoResponseBody, error)
+	DeleteTodoById(id int) error
+	UpdateTodoById(id int, updateBody models.TodoUpdateBody) (models.TodoResponseBody, error)
 }
 
 func ConnectToDB() (*sqlx.DB, error) {

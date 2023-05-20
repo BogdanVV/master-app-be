@@ -10,31 +10,24 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
+DO $$ BEGIN
+    CREATE TYPE todo_status AS ENUM ('in progress', 'completed', 'cancelled', 'failed');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
 CREATE TABLE IF NOT EXISTS todos (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
+    status todo_status NOT NULL DEFAULT 'in progress',
     active_days day_of_week[],
     priority priority DEFAULT 'medium',
     is_daily boolean DEFAULT false,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL
-);
-
--- insert into todos (
-    -- title,
-    -- description,
-    -- active_days,
-    -- priority,
-    -- is_daily,
-    -- created_at,
-    -- updated_at,
-    -- user_id
-    -- ) VALUES (
     
     -- 'todo 1',
     -- 'todo 1 description',
+    -- 'in progress',
     -- ARRAY['Monday']::day_of_week[],
     -- 'medium',
     -- false,
