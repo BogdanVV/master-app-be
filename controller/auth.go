@@ -47,3 +47,20 @@ func (c *Controller) Login(ctx *gin.Context) {
 	ctx.SetCookie("Authorization", user.AccessToken, 3600*24*30, "/", ctx.Request.URL.Hostname(), false, true)
 	ctx.JSON(http.StatusOK, gin.H{"data": user})
 }
+
+func (c *Controller) RefreshToken(ctx *gin.Context) {
+	token, err := ctx.Cookie("Authorization")
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
+		return
+	}
+
+	newToken, err := c.service.RefreshAccessTokenToken(token)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.SetCookie("Authorization", newToken, 3600*24*30, "/", ctx.Request.URL.Hostname(), false, true)
+	ctx.JSON(http.StatusOK, gin.H{"message": "the token was refreshed successfully"})
+}

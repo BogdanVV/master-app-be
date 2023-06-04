@@ -2,10 +2,12 @@ package service
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/bogdanvv/master-app-be/models"
 	"github.com/bogdanvv/master-app-be/repo"
 	"github.com/bogdanvv/master-app-be/utils"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -51,4 +53,31 @@ func (s *Auth) Login(email, password string) (models.LoginResponse, error) {
 		UpdatedAt:   user.UpdatedAt,
 		AccessToken: tokenString,
 	}, nil
+}
+
+func (c *Auth) RefreshAccessTokenToken(accessToken string) (string, error) {
+	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return "", fmt.Errorf("invalid token")
+		}
+
+		return []byte(os.Getenv("ACESS_TOKEN_SECRET")), nil
+	})
+	if err != nil {
+		return "", fmt.Errorf("could not parse the token")
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userId, err := claims.GetSubject()
+		if err != nil {
+			return "", fmt.Errorf("the token is mailformed")
+		}
+		newToken, err := utils.GenerateAccessToken(userId)
+		if err != nil {
+			return "", fmt.Errorf("could not generate a token")
+		}
+		return newToken, nil
+	}
+
+	return "", fmt.Errorf("unknown error occured")
 }

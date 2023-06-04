@@ -135,11 +135,8 @@ func (r *Todos) UpdateTodoById(id int, input models.TodoUpdateBody) (models.Todo
 		updateVals = append(updateVals, newValue)
 	}
 
-	if len(updateCols) != len(updateVals) {
+	if len(updateCols) != len(updateVals) || len(updateCols) == 0 || len(updateVals) == 0 {
 		return response, fmt.Errorf("invalid data")
-	}
-	if len(updateCols) == 0 || len(updateVals) == 0 {
-		return response, fmt.Errorf("empty body")
 	}
 
 	updateChunks := []string{}

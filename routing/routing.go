@@ -14,6 +14,7 @@ func InitRoutes(c controller.Controller) *gin.Engine {
 	{
 		auth.POST("/sign-up", c.Signup)
 		auth.POST("/login", c.Login)
+		auth.POST("/refresh-token", middleware.CheckAuth, c.RefreshToken)
 	}
 
 	api := r.Group("api")
