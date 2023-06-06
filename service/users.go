@@ -23,3 +23,7 @@ func (s *Users) UpdateUser(userId string, userUpdateBody models.UserUpdateBody) 
 
 	return s.repo.UpdateUser(userId, userUpdateBody)
 }
+
+func (s *Users) GetUserById(userId string) (models.UserResponse, error) {
+	return s.repo.GetUserById(userId)
+}

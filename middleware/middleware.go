@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/bogdanvv/master-app-be/config/constants"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -24,8 +25,8 @@ func CORSMiddleware(c *gin.Context) {
 }
 
 func CheckAuth(c *gin.Context) {
-	accessToken, err := c.Cookie("Authorization")
-	if err != nil {
+	accessToken := c.Request.Header.Get(constants.AUTHORIZATION_HEADER)
+	if accessToken == "" {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{})
 		return
 	}
@@ -42,7 +43,6 @@ func CheckAuth(c *gin.Context) {
 		return
 	}
 
-	// _ for skipping claims
 	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		c.Next()
 	} else {

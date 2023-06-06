@@ -24,7 +24,7 @@ func NewRepo(db *sqlx.DB) *Repo {
 }
 
 type AuthRepo interface {
-	CreateUser(name, email, password string) (string, error)
+	CreateUser(name, email, password string) (models.UserResponse, error)
 	GetUserByEmail(password string) (models.User, error)
 }
 

@@ -20,13 +20,14 @@ func NewService(repository *repo.Repo) *Service {
 }
 
 type AuthService interface {
-	Signup(name, email, password string) (string, error)
+	Signup(name, email, password string) (models.UserResponse, error)
 	Login(email, password string) (models.LoginResponse, error)
 	RefreshAccessTokenToken(token string) (string, error)
 }
 
 type UsersService interface {
 	UpdateUser(userId string, updateBody models.UserUpdateBody) (models.UserResponse, error)
+	GetUserById(userId string) (models.UserResponse, error)
 }
 
 type TodosService interface {

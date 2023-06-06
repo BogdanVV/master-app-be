@@ -2,8 +2,12 @@ package controller
 
 import (
 	"net/http"
+	"os"
 
+	"github.com/bogdanvv/master-app-be/config/constants"
+	"github.com/bogdanvv/master-app-be/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func (c *Controller) Signup(ctx *gin.Context) {
@@ -19,13 +23,19 @@ func (c *Controller) Signup(ctx *gin.Context) {
 		return
 	}
 
-	newUserId, err := c.service.Signup(input.Name, input.Email, input.Password)
+	user, err := c.service.Signup(input.Name, input.Email, input.Password)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"data": gin.H{"id": newUserId}})
+	accessToken, err := utils.GenerateAccessToken(user.Id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{"data": gin.H{"user": user, "accessToken": accessToken}})
 }
 
 func (c *Controller) Login(ctx *gin.Context) {
@@ -44,13 +54,12 @@ func (c *Controller) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie("Authorization", user.AccessToken, 3600*24*30, "/", ctx.Request.URL.Hostname(), false, true)
 	ctx.JSON(http.StatusOK, gin.H{"data": user})
 }
 
 func (c *Controller) RefreshToken(ctx *gin.Context) {
-	token, err := ctx.Cookie("Authorization")
-	if err != nil {
+	token := ctx.Request.Header.Get(constants.AUTHORIZATION_HEADER)
+	if token == "" {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
 		return
 	}
@@ -61,6 +70,25 @@ func (c *Controller) RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie("Authorization", newToken, 3600*24*30, "/", ctx.Request.URL.Hostname(), false, true)
-	ctx.JSON(http.StatusOK, gin.H{"message": "the token was refreshed successfully"})
+	jwtToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("ACESS_TOKEN_SECRET")), nil
+	})
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	claims, ok := jwtToken.Claims.(jwt.MapClaims)
+	if !ok || !jwtToken.Valid {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	userId, _ := claims.GetSubject()
+	user, err := c.service.GetUserById(userId)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"accessToken": newToken, "user": user}})
 }

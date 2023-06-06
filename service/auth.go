@@ -21,10 +21,10 @@ func NewAuth(repository *repo.Repo) *Auth {
 	}
 }
 
-func (s *Auth) Signup(name, email, password string) (string, error) {
+func (s *Auth) Signup(name, email, password string) (models.UserResponse, error) {
 	hashedPasswordBytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
-		return "", err
+		return models.UserResponse{}, err
 	}
 
 	return s.repo.CreateUser(name, email, string(hashedPasswordBytes))
@@ -46,11 +46,13 @@ func (s *Auth) Login(email, password string) (models.LoginResponse, error) {
 	}
 
 	return models.LoginResponse{
-		Id:          user.Id,
-		Name:        user.Name,
-		Email:       user.Email,
-		CreatedAt:   user.CreatedAt,
-		UpdatedAt:   user.UpdatedAt,
+		User: models.UserResponse{
+			Id:        user.Id,
+			Name:      user.Name,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
 		AccessToken: tokenString,
 	}, nil
 }
