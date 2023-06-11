@@ -8,7 +8,6 @@ import (
 	"github.com/bogdanvv/master-app-be/repo"
 	"github.com/bogdanvv/master-app-be/utils"
 	"github.com/golang-jwt/jwt/v5"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
@@ -22,7 +21,7 @@ func NewAuth(repository *repo.Repo) *Auth {
 }
 
 func (s *Auth) Signup(name, email, password string) (models.UserResponse, error) {
-	hashedPasswordBytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	hashedPasswordBytes, err := utils.GenerateHashedPassword(password)
 	if err != nil {
 		return models.UserResponse{}, err
 	}
@@ -47,11 +46,12 @@ func (s *Auth) Login(email, password string) (models.LoginResponse, error) {
 
 	return models.LoginResponse{
 		User: models.UserResponse{
-			Id:        user.Id,
-			Name:      user.Name,
-			Email:     user.Email,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
+			Id:              user.Id,
+			Name:            user.Name,
+			Email:           user.Email,
+			ProfileImageURL: user.ProfileImageURL,
+			CreatedAt:       user.CreatedAt,
+			UpdatedAt:       user.UpdatedAt,
 		},
 		AccessToken: tokenString,
 	}, nil

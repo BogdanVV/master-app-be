@@ -9,6 +9,7 @@ import (
 func InitRoutes(c controller.Controller) *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.CORSMiddleware)
+	r.Static("/profile-image", "public/uploads/profile-images")
 
 	auth := r.Group("auth")
 	{
@@ -24,7 +25,7 @@ func InitRoutes(c controller.Controller) *gin.Engine {
 
 		users := api.Group("users")
 		{
-			users.PUT("/:userId", c.UpdateUser)
+			users.PUT("/:id", c.UpdateUser)
 			users.GET("/:id", c.GetUserById)
 		}
 

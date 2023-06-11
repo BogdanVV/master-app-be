@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS todos (
     status todo_status NOT NULL DEFAULT 'in progress',
     active_days day_of_week[],
     priority priority DEFAULT 'medium',
-    is_daily boolean DEFAULT false,
+    is_daily boolean DEFAULT false
+);
     
     -- 'todo 1',
     -- 'todo 1 description',

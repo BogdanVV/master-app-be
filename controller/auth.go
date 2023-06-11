@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// TODO: add image upload like on user-update
 func (c *Controller) Signup(ctx *gin.Context) {
 	var input struct {
 		Name     string `json:"name" binding:"required"`

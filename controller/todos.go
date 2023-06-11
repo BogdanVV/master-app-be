@@ -24,6 +24,7 @@ func (c *Controller) CreateTodo(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{"data": todo})
 }
 
+// TODO: add pagination
 func (c *Controller) GetAllTodos(ctx *gin.Context) {
 	todos, err := c.service.GetAllTodos()
 	if err != nil {

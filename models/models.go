@@ -1,17 +1,20 @@
 package models
 
 import (
-	"github.com/lib/pq"
+	"mime/multipart"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 type User struct {
-	Id        string    `db:"id"`
-	Name      string    `db:"name"`
-	Email     string    `db:"email"`
-	Password  string    `db:"password"`
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
+	Id              string    `json:"id" db:"id"`
+	Name            string    `json:"name" db:"name"`
+	Email           string    `json:"email" db:"email"`
+	Password        string    `json:"password" db:"password"`
+	ProfileImageURL *string   `json:"profileImageURL,omitempty" db:"profile_image_url"` // nullable
+	CreatedAt       time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt       time.Time `json:"updatedAt" db:"updated_at"`
 }
 
 type LoginResponse struct {
@@ -20,16 +23,20 @@ type LoginResponse struct {
 }
 
 type UserResponse struct {
-	Id        string    `json:"id" db:"id"`
-	Name      string    `json:"name" db:"name"`
-	Email     string    `json:"email" db:"email"`
-	CreatedAt time.Time `json:"createdAt" db:"created_at"`
-	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
+	Id              string    `json:"id" db:"id"`
+	Name            string    `json:"name" db:"name"`
+	Email           string    `json:"email" db:"email"`
+	ProfileImageURL *string   `json:"profileImageURL,omitempty" db:"profile_image_url"` // nullable
+	CreatedAt       time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt       time.Time `json:"updatedAt" db:"updated_at"`
 }
 
 type UserUpdateBody struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name     string                `form:"name"`
+	Email    string                `form:"email"`
+	Password string                `form:"password"`
+	Image    *multipart.FileHeader `form:"image"` // used only on controller level to upload the file
+	ImageURL string                // used on service level to save URL in db
 }
 
 type TodoCreateBody struct {

@@ -26,9 +26,8 @@ func (r *Auth) CreateUser(name, email, password string) (models.UserResponse, er
 		return user, err
 	}
 
-	query := "SELECT id, name, email, created_at, updated_at FROM users WHERE id=$1"
+	query := "SELECT id, name, email, profile_image_url, created_at, updated_at FROM users WHERE id=$1"
 	if err := r.db.Get(&user, query, newUserId); err != nil {
-		fmt.Println(err.Error())
 		return user, fmt.Errorf("failed to fetch data about the user")
 	}
 

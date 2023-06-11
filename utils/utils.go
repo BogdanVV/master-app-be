@@ -26,3 +26,8 @@ func GenerateAccessToken(userId string) (string, error) {
 
 	return token.SignedString([]byte(os.Getenv("ACESS_TOKEN_SECRET")))
 }
+
+func GenerateHashedPassword(rawPassword string) (string, error) {
+	hashedPasswordBytes, err := bcrypt.GenerateFromPassword([]byte(rawPassword), 10)
+	return string(hashedPasswordBytes), err
+}
