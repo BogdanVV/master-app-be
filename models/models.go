@@ -7,6 +7,14 @@ import (
 	"github.com/lib/pq"
 )
 
+type SignUpBody struct {
+	Name     string                `form:"name" binding:"required"`
+	Email    string                `form:"email" binding:"required"`
+	Password string                `form:"password" binding:"required"`
+	Image    *multipart.FileHeader `form:"image"`
+	ImageURL string
+}
+
 type User struct {
 	Id              string    `json:"id" db:"id"`
 	Name            string    `json:"name" db:"name"`
@@ -46,7 +54,6 @@ type TodoCreateBody struct {
 	ActiveDays  []string `json:"activeDays"`
 	Priority    string   `json:"priority"`
 	IsDaily     bool     `json:"isDaily"`
-	UserId      string   `json:"userId" binding:"required"`
 }
 
 type TodoResponseBody struct {

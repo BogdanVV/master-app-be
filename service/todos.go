@@ -13,22 +13,22 @@ func NewTodos(r *repo.Repo) *Todos {
 	return &Todos{repo: r}
 }
 
-func (s *Todos) CreateTodo(input models.TodoCreateBody) (models.TodoResponseBody, error) {
-	return s.repo.CreateTodo(input)
+func (s *Todos) CreateTodo(input models.TodoCreateBody, userId string) (models.TodoResponseBody, error) {
+	return s.repo.CreateTodo(input, userId)
 }
 
-func (s *Todos) GetAllTodos() ([]models.TodoResponseBody, error) {
-	return s.repo.GetAllTodos()
+func (s *Todos) GetAllTodos(userId string) ([]models.TodoResponseBody, error) {
+	return s.repo.GetAllTodos(userId)
 }
 
-func (s *Todos) GetTodoById(id int) (models.TodoResponseBody, error) {
-	return s.repo.GetTodoById(id)
+func (s *Todos) GetTodoById(id int, userId string) (models.TodoResponseBody, error) {
+	return s.repo.GetTodoById(id, userId)
 }
 
-func (s *Todos) DeleteTodoById(id int) error {
-	return s.repo.DeleteTodoById(id)
+func (s *Todos) DeleteTodoById(id int, userId string) error {
+	return s.repo.DeleteTodoById(id, userId)
 }
 
-func (s *Todos) UpdateTodoById(id int, input models.TodoUpdateBody) (models.TodoResponseBody, error) {
-	return s.repo.UpdateTodoById(id, input)
+func (s *Todos) UpdateTodoById(id int, input models.TodoUpdateBody, userId string) (models.TodoResponseBody, error) {
+	return s.repo.UpdateTodoById(id, input, userId)
 }

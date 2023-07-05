@@ -16,12 +16,12 @@ func NewTodos(db *sqlx.DB) *Todos {
 	return &Todos{db: db}
 }
 
-func (r *Todos) CreateTodo(input models.TodoCreateBody) (models.TodoResponseBody, error) {
+func (r *Todos) CreateTodo(input models.TodoCreateBody, userId string) (models.TodoResponseBody, error) {
 	var newTodo models.TodoResponseBody
 	fields := []string{"title", "user_id"}
 	values := []string{
 		fmt.Sprintf("'%s'", input.Title),
-		fmt.Sprintf("'%s'", input.UserId),
+		fmt.Sprintf("'%s'", userId),
 	}
 	if input.Description != "" {
 		fields = append(fields, "description")
@@ -63,23 +63,27 @@ func (r *Todos) CreateTodo(input models.TodoCreateBody) (models.TodoResponseBody
 	return newTodo, err
 }
 
-func (r *Todos) GetAllTodos() ([]models.TodoResponseBody, error) {
+func (r *Todos) GetAllTodos(userId string) ([]models.TodoResponseBody, error) {
 	var response []models.TodoResponseBody
-	query := "SELECT id, title, description, status, active_days, priority, is_daily, created_at, updated_at, user_id FROM todos"
-	err := r.db.Select(&response, query)
+	query := "SELECT id, title, description, status, active_days, priority, is_daily, created_at, updated_at, user_id FROM todos WHERE user_id = $1"
+	err := r.db.Select(&response, query, userId)
 
 	return response, err
 }
 
-func (r *Todos) GetTodoById(id int) (models.TodoResponseBody, error) {
+func (r *Todos) GetTodoById(id int, userId string) (models.TodoResponseBody, error) {
 	var wantedTodo models.TodoResponseBody
 	query := "SELECT id, title, description, status, active_days, priority, is_daily, created_at, updated_at, user_id FROM todos WHERE id=$1"
 	err := r.db.Get(&wantedTodo, query, id)
+	if wantedTodo.UserId != userId {
+		return models.TodoResponseBody{}, fmt.Errorf("this todo does not belong to you")
+	}
 
 	return wantedTodo, err
 }
 
-func (r *Todos) DeleteTodoById(id int) error {
+func (r *Todos) DeleteTodoById(id int, userId string) error {
+	r.GetTodoById(id, userId)
 	res, err := r.db.Exec("DELETE FROM todos WHERE id=$1", id)
 	if err != nil {
 		return err
@@ -93,11 +97,14 @@ func (r *Todos) DeleteTodoById(id int) error {
 	return err
 }
 
-func (r *Todos) UpdateTodoById(id int, input models.TodoUpdateBody) (models.TodoResponseBody, error) {
+func (r *Todos) UpdateTodoById(id int, input models.TodoUpdateBody, userId string) (models.TodoResponseBody, error) {
 	var response models.TodoResponseBody
-	todo, err := r.GetTodoById(id)
+	todo, err := r.GetTodoById(id, userId)
 	if err != nil {
 		return response, err
+	}
+	if todo.UserId != userId {
+		return response, fmt.Errorf("this todo does not belong to you")
 	}
 
 	updateCols := []string{}

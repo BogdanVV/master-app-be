@@ -36,7 +36,7 @@ func (r *Auth) CreateUser(name, email, password string) (models.UserResponse, er
 
 func (r *Auth) GetUserByEmail(email string) (models.User, error) {
 	var user models.User
-	queryString := "SELECT id, name, email, password, created_at, updated_at FROM users WHERE email=$1"
+	queryString := "SELECT id, name, email, password, profile_image_url, created_at, updated_at FROM users WHERE email=$1"
 	if err := r.db.Get(&user, queryString, email); err != nil {
 		return user, fmt.Errorf("user with email %s does not exist", email)
 	}

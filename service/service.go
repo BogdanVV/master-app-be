@@ -31,9 +31,9 @@ type UsersService interface {
 }
 
 type TodosService interface {
-	CreateTodo(input models.TodoCreateBody) (models.TodoResponseBody, error)
-	GetAllTodos() ([]models.TodoResponseBody, error)
-	GetTodoById(id int) (models.TodoResponseBody, error)
-	DeleteTodoById(id int) error
-	UpdateTodoById(id int, input models.TodoUpdateBody) (models.TodoResponseBody, error)
+	CreateTodo(input models.TodoCreateBody, userId string) (models.TodoResponseBody, error)
+	GetAllTodos(userId string) ([]models.TodoResponseBody, error)
+	GetTodoById(id int, userId string) (models.TodoResponseBody, error)
+	DeleteTodoById(id int, userId string) error
+	UpdateTodoById(id int, input models.TodoUpdateBody, userId string) (models.TodoResponseBody, error)
 }

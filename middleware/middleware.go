@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/bogdanvv/master-app-be/config/constants"
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,11 @@ func CORSMiddleware(c *gin.Context) {
 }
 
 func CheckAuth(c *gin.Context) {
-	accessToken := c.Request.Header.Get(constants.AUTHORIZATION_HEADER)
+	authHeader := c.Request.Header.Get(constants.AUTHORIZATION_HEADER)
+	if authHeader == "" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
+	}
+	accessToken := strings.Split(authHeader, " ")[1]
 	if accessToken == "" {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{})
 		return
@@ -43,7 +48,14 @@ func CheckAuth(c *gin.Context) {
 		return
 	}
 
-	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userId, err := claims.GetSubject()
+		if err != nil || userId == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token's sub"})
+			return
+		}
+
+		c.Set("userId", userId)
 		c.Next()
 	} else {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error2": err.Error()})

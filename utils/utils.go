@@ -31,3 +31,25 @@ func GenerateHashedPassword(rawPassword string) (string, error) {
 	hashedPasswordBytes, err := bcrypt.GenerateFromPassword([]byte(rawPassword), 10)
 	return string(hashedPasswordBytes), err
 }
+
+func ExtractIdFromAccessToken(tokenString string) (string, error) {
+	var userId string
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("invalid token")
+		}
+
+		return []byte(os.Getenv("ACESS_TOKEN_SECRET")), nil
+	})
+	if err != nil {
+		return userId, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		fmt.Println(claims)
+	} else {
+		return userId, err
+	}
+
+	return userId, nil
+}
